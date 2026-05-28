@@ -56,17 +56,11 @@ int linearSearchByDate(Node* head, Product::Date target, Product* result) {
     return foundCount;
 }
 
-// ==========================================
-//          УМНАЯ СОРТИРОВКА ХОАРА
-// ==========================================
 
-// Превращаем дату в одно число (приблизительно в дни), чтобы легко сравнивать
 long long getDateWeight(const Product::Date& d) {
-    // Превращаем дату в одно число для удобного сравнения
     return (long long)d.year * 365 + d.month * 30 + d.day;
 }
 
-// Компаратор должен использовать СТРОГИЕ неравенства (< или >)
 bool compareProducts(const Product& a, const Product& b, int sortBy, bool ascending) {
     if (sortBy == 1) {
         return ascending ? a.name < b.name : a.name > b.name;
@@ -85,7 +79,7 @@ bool compareProducts(const Product& a, const Product& b, int sortBy, bool ascend
     return false;
 }
 
-// Безопасное разделение Хоара (с опорным элементом посередине)
+
 int hoarePartition(Product* arr, int low, int high, int sortBy, bool ascending) {
     Product pivot = arr[low + (high - low) / 2];
     int i = low - 1;
@@ -97,14 +91,14 @@ int hoarePartition(Product* arr, int low, int high, int sortBy, bool ascending) 
 
         if (i >= j) return j;
 
-        // Меняем элементы местами
+   
         Product temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
     }
 }
 
-// Сама быстрая сортировка с защитой от бесконечной рекурсии
+
 void quickSort(Product* arr, int low, int high, int sortBy, bool ascending) {
     if (low < high) {
         int pi = hoarePartition(arr, low, high, sortBy, ascending);

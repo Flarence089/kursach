@@ -3,11 +3,12 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <cctype>
 
 using namespace std;
 
 
-//    БЕЗОПАСНЫЙ ВВОД И ВАЛИДАЦИЯ
+
 
 int getInt() {
     int x;
@@ -93,7 +94,7 @@ void inputDate(Product::Date& date) {
 }
 
 
-//    ОСНОВНЫЕ ФУНКЦИИ УПРАВЛЕНИЯ СПИСКОМ
+
 
 
 void insertProduct(Node*& head, Node*& tail, int& size) {
@@ -252,7 +253,7 @@ void editProduct(Node* head, int size) {
 }
 
 
-//          ПОИСК И ВЫВОД НА ЭКРАН
+
 
 
 void findProduct(Node* head, int size) {
@@ -313,7 +314,6 @@ void findProduct(Node* head, int size) {
 void printTableUnsorted(Node* head, int size) {
     if (size == 0) { cout << "Записей нет\n"; return; }
 
-    // Красивая шапка таблицы
     cout << "\n+---------------------------+------------+--------+------------+\n";
     cout << "| " << left << setw(25) << "Название"
         << " | " << setw(10) << "Кол-во"
@@ -322,18 +322,20 @@ void printTableUnsorted(Node* head, int size) {
     cout << "+---------------------------+------------+--------+------------+\n";
 
     Node* curr = head;
+    int i = 1;
     while (curr != nullptr) {
         string n = curr->data.name;
-        if (n.length() > 25) n = n.substr(0, 22) + "..."; // 22 буквы + 3 точки
+        if (n.length() > 25) n = n.substr(0, 22) + "..."; 
 
-        cout << "| " << left << setfill(' ') << setw(25) << n
+        cout << i++ << ' | '
+            << "| " << left << setfill(' ') << setw(25) << n
             << " | " << setw(10) << curr->data.count
             << " | " << setw(6) << curr->data.fabric_number
-            << " | " << right << setfill('0') // Включаем выравнивание вправо для дат
+            << " | " << right << setfill('0') 
             << setw(2) << curr->data.date.day << "."
             << setw(2) << curr->data.date.month << "."
             << setw(4) << curr->data.date.year
-            << left << setfill(' ') << " |\n"; // Возвращаем пробелы и левое выравнивание
+            << left << setfill(' ') << " |\n"; 
         curr = curr->next;
     }
     cout << "+---------------------------+------------+--------+------------+\n";
@@ -368,7 +370,7 @@ void printTableSorted(Node* head, int size) {
         cout << "\n*** РЕЗУЛЬТАТ ВЫПОЛНЕНИЯ ИНДИВИДУАЛЬНОГО ЗАДАНИЯ ***";
     }
 
-    // Красивая шапка таблицы
+
     cout << "\n+---------------------------+------------+--------+------------+\n";
     cout << "| " << left << setw(25) << "Название"
         << " | " << setw(10) << "Кол-во"
@@ -391,6 +393,93 @@ void printTableSorted(Node* head, int size) {
     }
     cout << "+---------------------------+------------+--------+------------+\n";
     delete[] arr;
+}
+
+
+void filterData(Node* head) {
+    if (head == nullptr) {
+        cout << "База данных пуста. Фильтровать нечего.\n";
+        return;
+    }
+
+    int choice;
+    cout << "\n--- МЕНЮ ФИЛЬТРАЦИИ ---\n";
+    cout << "1. По названию детали\n";
+    cout << "2. По номеру цеха\n";
+    cout << "3. По количеству\n";
+    cout << "4. По дате выпуска\n";
+    cout << "Выберит  е критерий (1-4): ";
+
+    while (true) {
+        choice = getInt();
+        if (choice >= 1 && choice <= 4) break;
+        cout << "Ошибка! Выберите пункт от 1 до 4: ";
+    }
+
+    string searchName;
+    int searchInt;
+    int sDay = 0, sMonth = 0, sYear = 0;
+
+    if (choice == 1) {
+        cout << "Введите название для поиска: ";
+        cin >> ws;
+        searchName = getValidString(30);
+    }
+    else if (choice == 2) {
+        cout << "Введите искомый номер цеха: ";
+        searchInt = getInt();
+    }
+    else if (choice == 3) {
+        cout << "Введите искомое количество: ";
+        searchInt = getInt();
+    }
+    else if (choice == 4) {
+        cout << "Введите дату (год, месяц, день):\n";
+        while (true) { cout << "Год: "; sYear = getInt(); if (isValidYear(sYear)) break; cout << "Ошибка! Год должен быть от 1900 до 2026.\n"; }
+        while (true) { cout << "Месяц: "; sMonth = getInt(); if (isValidMonth(sMonth)) break; cout << "Ошибка! Месяц должен быть от 1 до 12.\n"; }
+        while (true) { cout << "День: "; sDay = getInt(); if (isValidDay(sDay, sMonth, sYear)) break; cout << "Ошибка! Неверный день.\n"; }
+    }
+
+    Node* current = head;
+    bool isFound = false;
+    int i = 1;
+
+    cout << "\n+----+---------------------------+------------+--------+------------+\n";
+    cout << "| №  | " << left << setw(25) << "Название"
+        << " | " << setw(10) << "Кол-во"
+        << " | " << setw(6) << "Цех"
+        << " | " << setw(10) << "Дата" << " |\n";
+    cout << "+----+---------------------------+------------+--------+------------+\n";
+
+    while (current != nullptr) {
+        bool match = false;
+
+        if (choice == 1 && current->data.name == searchName) match = true;
+        else if (choice == 2 && current->data.fabric_number == searchInt) match = true;
+        else if (choice == 3 && current->data.count == searchInt) match = true;
+        else if (choice == 4 && current->data.date.day == sDay &&
+            current->data.date.month == sMonth && current->data.date.year == sYear) match = true;
+
+        if (match) {
+            string n = current->data.name;
+            if (n.length() > 25) n = n.substr(0, 22) + "...";
+
+            cout << "| " << left << setw(2) << i++ << " | "
+                << setfill(' ') << setw(25) << n
+                << " | " << setw(10) << current->data.count
+                << " | " << setw(6) << current->data.fabric_number
+                << " | " << right << setfill('0')
+                << setw(2) << current->data.date.day << "."
+                << setw(2) << current->data.date.month << "."
+                << setw(4) << current->data.date.year
+                << left << setfill(' ') << " |\n";
+            isFound = true;
+        }
+        current = current->next;
+    }
+    cout << "+----+---------------------------+------------+--------+------------+\n";
+
+    if (!isFound) cout << "Ничего не найдено.\n";
 }
 
 
@@ -418,11 +507,10 @@ void printMenu(bool isBinaryMode, int currentSize) {
     cout << "|| 9. Редактировать запись                   ||\n";
     cout << "|| 10. Найти продукцию (Название / Цех)      ||\n";
     cout << "|| 11. Очистка динамической памяти           ||\n";
-    cout << "|| 12. Сменить режим (Текст/Бинарный)        ||\n";
+    cout << "|| 12. Фильтрация                            ||\n";
     cout << "|| 0. Выход из программы                     ||\n";
     cout << "===============================================\n";
-    cout << "Режим: [" << (isBinaryMode ? "Бинарный" : "Текстовый")
-        << "] | Записей в памяти: " << currentSize << "\n";
+    cout << "| Записей в памяти : " << currentSize << "\n";
     cout << "Ваш выбор: ";
 }
 

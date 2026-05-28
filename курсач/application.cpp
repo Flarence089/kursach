@@ -16,17 +16,17 @@ int main() {
     Node* tail = nullptr;
     int size = 0;
     bool isRunning = true;
-    bool isBinaryMode = false; // По умолчанию текстовый режим
+    bool isBinaryMode = false; 
 
     while (isRunning) {
         system("cls");
 
-        // Передаем режим и размер списка для отображения внизу меню
+      
         printMenu(isBinaryMode, size);
 
         int choice = getInt();
 
-        // Передаем isBinaryMode в обработчик
+        
         executeCommand(choice, head, tail, size, isRunning, isBinaryMode);
     }
 

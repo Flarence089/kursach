@@ -11,3 +11,4 @@ void printMenu(bool isBinaryMode, int currentSize);
 void pauseConsole();
 void findProduct(Node* head, int size);
 void editProduct(Node* head, int size);
+void filterData(Node* head);

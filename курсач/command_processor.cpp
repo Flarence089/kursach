@@ -8,7 +8,6 @@
 using namespace std;
 
 void executeCommand(int choice, Node*& head, Node*& tail, int& size, bool& isRunning, bool& isBinaryMode) {
-    // Автоматическое определение имени файла по умолчанию в зависимости от режима
     string filename = isBinaryMode ? "database.bin" : "database.txt";
 
     switch (choice) {
@@ -77,11 +76,9 @@ void executeCommand(int choice, Node*& head, Node*& tail, int& size, bool& isRun
         pauseConsole();
         break;
     case 12:
-        system("cls");
-        isBinaryMode = !isBinaryMode; // Переключаем режим
-        cout << "Режим работы с файлами изменен на: " << (isBinaryMode ? "БИНАРНЫЙ" : "ТЕКСТОВЫЙ") << "\n";
-        pauseConsole();
+        system("cls"); filterData(head);pauseConsole();
         break;
+   
 
         // --- ВЫХОД ---
     case 0:
